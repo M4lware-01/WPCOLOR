@@ -1,13 +1,16 @@
-$INSTALL_DIR = [System.Environment]::GetFolderPath('ApplicationData')
+$destination = Join-Path -Path $env:APPDATA -ChildPath 'WP_lib'
 
-$LIB_DIR = "WP_lib"
+if (-not (Test-Path -Path $destination -PathType Container)) {
+    New-Item -Path $destination -ItemType Directory
+}
+Invoke-WebRequest -Uri 'https://github.com/M4lware-01/WPCOLOR/archive/main.zip' -OutFile (Join-Path -Path $destination -ChildPath 'WPCOLOR-main.zip')
 
-$FULL_INSTALL_DIR = Join-Path -Path $INSTALL_DIR -ChildPath $LIB_DIR
+Set-Location -Path $destination
 
-git clone https://github.com/M4lware-01/WPCOLOR.git $FULL_INSTALL_DIR
+Expand-Archive -Path 'WPCOLOR-main.zip' -DestinationPath .
 
-Set-Location -Path $FULL_INSTALL_DIR
+Rename-Item -Path 'WPCOLOR-main' -NewName 'WPCOLOR'
 
-pip install -e .
+Remove-Item -Path 'WPCOLOR-main.zip' -Force
 
-Write-Host "Installation terminée."
+Write-Host "Téléchargement, extraction et décompression terminés."
